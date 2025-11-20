@@ -440,6 +440,32 @@
             animation: float 3s infinite ease-in-out;
         }
 
+        @keyframes run-away {
+            0% {
+                transform: translateX(0) scaleX(1);
+            }
+
+            20% {
+                transform: translateX(-20px) scaleX(1);
+            }
+
+            /* Anticipation */
+            25% {
+                transform: translateX(-20px) scaleX(-1);
+            }
+
+            /* Turn around */
+            100% {
+                transform: translateX(1000px) scaleX(-1);
+            }
+
+            /* Run off */
+        }
+
+        .animate-run-away {
+            animation: run-away 2s forwards ease-in;
+        }
+
         /* Controls */
         .controls {
             padding: 1.5rem;
@@ -1117,8 +1143,18 @@
             gameOver() {
                 this.isDead = true;
                 clearInterval(this.loopId);
-                document.getElementById('game-over').classList.add('visible');
+
+                const cat = document.getElementById('cat-svg');
+                cat.classList.remove('animate-float');
+                cat.querySelector('.animate-breathe').classList.remove('animate-breathe');
+                cat.classList.add('animate-run-away');
+
                 this.soundManager.play('gameover');
+
+                // Wait for animation to finish before showing dialog
+                setTimeout(() => {
+                    document.getElementById('game-over').classList.add('visible');
+                }, 2000);
             }
 
             restart() {
@@ -1132,6 +1168,12 @@
 
                 this.isSleeping = false;
                 this.isDead = false;
+
+                const cat = document.getElementById('cat-svg');
+                cat.classList.remove('animate-run-away');
+                cat.classList.add('animate-float');
+                cat.querySelector('g').classList.add('animate-breathe'); // Re-add breathe to inner group
+
                 document.getElementById('game-over').classList.remove('visible');
 
                 // Remove mute button to avoid duplicates on re-init (or just reset state)
