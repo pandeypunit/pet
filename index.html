@@ -466,6 +466,85 @@
             animation: run-away 2s forwards ease-in;
         }
 
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .cat-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .cat-option {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 1rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .cat-option:hover,
+        .cat-option.selected {
+            background: white;
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .cat-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 0.5rem;
+        }
+
+        .close-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.05);
+        }
+
         /* Controls */
         .controls {
             padding: 1.5rem;
@@ -684,8 +763,12 @@
             <div class="header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h1 style="font-size: 1.25rem;">Purrfect Pal</h1>
-                    <div class="level-badge">
-                        <span>⭐ Lvl <span id="level-display">1</span></span>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <button class="btn" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;"
+                            onclick="game.openCatSelect()">🐱 Swap</button>
+                        <div class="level-badge">
+                            <span>⭐ Lvl <span id="level-display">1</span></span>
+                        </div>
                     </div>
                 </div>
                 <div class="xp-bar-container">
@@ -812,6 +895,16 @@
                 <!-- Items injected by JS -->
             </div>
         </div>
+
+        <div class="modal-overlay" id="cat-select-modal">
+            <div class="modal-content">
+                <h2>Choose Your Pal</h2>
+                <div class="cat-options" id="cat-options">
+                    <!-- Options injected by JS -->
+                </div>
+                <button class="close-btn" onclick="game.closeCatSelect()">Close</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -854,6 +947,14 @@
                     { id: 'hat', name: 'Party Hat', icon: '🎩', price: 200, type: 'accessory', desc: 'Time to party!' }
                 ];
 
+                this.catTypes = {
+                    'orange': { name: 'Ginger', body: '#FFB86C', belly: '#FFEAA7' },
+                    'black': { name: 'Void', body: '#2D3436', belly: '#636E72' },
+                    'white': { name: 'Snow', body: '#DFE6E9', belly: '#FFFFFF' },
+                    'grey': { name: 'Smokey', body: '#B2BEC3', belly: '#DFE6E9' }
+                };
+                this.currentCatType = 'orange';
+
                 this.init();
             }
 
@@ -862,6 +963,7 @@
                 this.startGameLoop();
                 this.updateUI();
                 this.renderShop();
+                this.renderCat();
 
                 // Add click handler to cat
                 document.getElementById('cat-svg').addEventListener('click', (e) => {
@@ -883,6 +985,57 @@
                 controls.appendChild(muteBtn);
                 // Adjust grid columns for 5 buttons
                 controls.style.gridTemplateColumns = 'repeat(5, 1fr)';
+            }
+
+            openCatSelect() {
+                const modal = document.getElementById('cat-select-modal');
+                const container = document.getElementById('cat-options');
+                container.innerHTML = '';
+
+                Object.entries(this.catTypes).forEach(([key, type]) => {
+                    const div = document.createElement('div');
+                    div.className = `cat-option ${this.currentCatType === key ? 'selected' : ''}`;
+                    div.onclick = () => this.selectCat(key);
+
+                    div.innerHTML = `
+                        <div class="cat-preview" style="background: ${type.body}; border: 4px solid ${type.belly};"></div>
+                        <div style="font-weight: bold;">${type.name}</div>
+                    `;
+                    container.appendChild(div);
+                });
+
+                modal.classList.add('visible');
+            }
+
+            closeCatSelect() {
+                document.getElementById('cat-select-modal').classList.remove('visible');
+            }
+
+            selectCat(type) {
+                this.currentCatType = type;
+                this.renderCat();
+                this.closeCatSelect();
+                this.showToast(`Selected ${this.catTypes[type].name}!`);
+                this.soundManager.play('feed');
+            }
+
+            renderCat() {
+                const colors = this.catTypes[this.currentCatType];
+                const svg = document.getElementById('cat-svg');
+
+                // Update Body and Ears (Fill)
+                svg.querySelectorAll('.cat-body, .cat-ear').forEach(el => {
+                    el.style.fill = colors.body;
+                });
+
+                // Update Tail (Stroke)
+                const tail = svg.querySelector('.cat-tail');
+                if (tail) tail.style.stroke = colors.body;
+
+                // Update Belly and Inner Ears (Fill)
+                svg.querySelectorAll('.cat-belly, .cat-ear-inner').forEach(el => {
+                    el.style.fill = colors.belly;
+                });
             }
 
             startGameLoop() {
