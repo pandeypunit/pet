@@ -41,26 +41,189 @@
             overflow: hidden;
         }
 
+        .main-wrapper {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            width: 100%;
+            padding: 1rem;
+        }
+
         .game-container {
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             width: 100%;
             max-width: 450px;
-            height: 100vh;
+            height: 90vh;
             max-height: 850px;
             position: relative;
             display: flex;
             flex-direction: column;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            border-radius: 0;
+            border-radius: 2.5rem;
             border: 1px solid rgba(255, 255, 255, 0.4);
+            flex-shrink: 0;
         }
 
-        @media (min-width: 480px) {
+        .shop-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            width: 100%;
+            max-width: 350px;
+            height: 80vh;
+            max-height: 700px;
+            border-radius: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .shop-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coin-display {
+            background: var(--warning);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .shop-items {
+            overflow-y: auto;
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding-right: 0.5rem;
+        }
+
+        .shop-items::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .shop-items::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+
+        .shop-item {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 1rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .shop-item:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .shop-item.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        .item-icon {
+            font-size: 2rem;
+            background: var(--bg-gradient);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .item-desc {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: var(--warning);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Accessories on Cat */
+        .cat-accessory {
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+
+        .accessory-bow {
+            fill: #FF7675;
+        }
+
+        .accessory-glasses {
+            fill: none;
+            stroke: #2D3436;
+            stroke-width: 3;
+        }
+
+        .accessory-hat {
+            fill: #6C5CE7;
+        }
+
+        @media (max-width: 850px) {
+            .main-wrapper {
+                flex-direction: column;
+                height: auto;
+                overflow-y: auto;
+                padding-top: 2rem;
+            }
+
             .game-container {
-                height: 90vh;
-                border-radius: 2.5rem;
+                height: 80vh;
+            }
+
+            .shop-container {
+                height: auto;
+                width: 100%;
+                max-width: 450px;
+            }
+
+            body {
+                align-items: flex-start;
+                overflow-y: auto;
             }
         }
 
@@ -490,121 +653,138 @@
 
 <body>
 
-    <div class="game-container">
-        <div class="header">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h1 style="font-size: 1.25rem;">Purrfect Pal</h1>
-                <div class="level-badge">
-                    <span>⭐ Lvl <span id="level-display">1</span></span>
+    <div class="main-wrapper">
+        <div class="game-container">
+            <div class="header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1 style="font-size: 1.25rem;">Purrfect Pal</h1>
+                    <div class="level-badge">
+                        <span>⭐ Lvl <span id="level-display">1</span></span>
+                    </div>
+                </div>
+                <div class="xp-bar-container">
+                    <div class="xp-bar-fill" id="xp-bar"></div>
                 </div>
             </div>
-            <div class="xp-bar-container">
-                <div class="xp-bar-fill" id="xp-bar"></div>
-            </div>
-        </div>
 
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-label"><span>Hunger</span> <span id="hunger-val">100%</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="hunger-bar" style="background: var(--success);"></div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label"><span>Hunger</span> <span id="hunger-val">100%</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="hunger-bar" style="background: var(--success);"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label"><span>Energy</span> <span id="energy-val">100%</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="energy-bar" style="background: var(--success);"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label"><span>Fun</span> <span id="fun-val">100%</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="fun-bar" style="background: var(--success);"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label"><span>Hygiene</span> <span id="hygiene-val">100%</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="hygiene-bar" style="background: var(--success);"></div>
+                    </div>
                 </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-label"><span>Energy</span> <span id="energy-val">100%</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="energy-bar" style="background: var(--success);"></div>
-                </div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label"><span>Fun</span> <span id="fun-val">100%</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="fun-bar" style="background: var(--success);"></div>
-                </div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label"><span>Hygiene</span> <span id="hygiene-val">100%</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="hygiene-bar" style="background: var(--success);"></div>
-                </div>
-            </div>
-        </div>
 
-        <div class="scene">
-            <!-- SVG Cat -->
-            <svg id="cat-svg" viewBox="0 0 200 200" class="animate-float">
-                <g class="animate-breathe">
-                    <!-- Tail -->
-                    <path d="M 140 150 Q 170 120 160 90" class="cat-tail animate-tail" />
+            <div class="scene">
+                <!-- SVG Cat -->
+                <svg id="cat-svg" viewBox="0 0 200 200" class="animate-float">
+                    <g class="animate-breathe">
+                        <!-- Tail -->
+                        <path d="M 140 150 Q 170 120 160 90" class="cat-tail animate-tail" />
 
-                    <!-- Body -->
-                    <ellipse cx="100" cy="140" rx="50" ry="45" class="cat-body" />
-                    <ellipse cx="100" cy="145" rx="30" ry="35" class="cat-belly" />
+                        <!-- Body -->
+                        <ellipse cx="100" cy="140" rx="50" ry="45" class="cat-body" />
+                        <ellipse cx="100" cy="145" rx="30" ry="35" class="cat-belly" />
 
-                    <!-- Head Group -->
-                    <g transform="translate(0, -10)">
-                        <!-- Ears -->
-                        <path d="M 70 75 L 60 40 L 90 65 Z" class="cat-ear" />
-                        <path d="M 130 75 L 140 40 L 110 65 Z" class="cat-ear" />
-                        <path d="M 72 70 L 65 50 L 85 65 Z" class="cat-ear-inner" />
-                        <path d="M 128 70 L 135 50 L 115 65 Z" class="cat-ear-inner" />
+                        <!-- Head Group -->
+                        <g transform="translate(0, -10)">
+                            <!-- Ears -->
+                            <path d="M 70 75 L 60 40 L 90 65 Z" class="cat-ear" />
+                            <path d="M 130 75 L 140 40 L 110 65 Z" class="cat-ear" />
+                            <path d="M 72 70 L 65 50 L 85 65 Z" class="cat-ear-inner" />
+                            <path d="M 128 70 L 135 50 L 115 65 Z" class="cat-ear-inner" />
 
-                        <!-- Head Base -->
-                        <circle cx="100" cy="85" r="40" class="cat-body" />
+                            <!-- Head Base -->
+                            <circle cx="100" cy="85" r="40" class="cat-body" />
 
-                        <!-- Face -->
-                        <g id="face-features">
-                            <!-- Eyes -->
-                            <g class="animate-blink">
-                                <circle cx="85" cy="80" r="4" class="cat-eye" />
-                                <circle cx="115" cy="80" r="4" class="cat-eye" />
+                            <!-- Face -->
+                            <g id="face-features">
+                                <!-- Eyes -->
+                                <g class="animate-blink">
+                                    <circle cx="85" cy="80" r="4" class="cat-eye" />
+                                    <circle cx="115" cy="80" r="4" class="cat-eye" />
+                                </g>
+
+                                <!-- Nose -->
+                                <path d="M 96 90 L 104 90 L 100 95 Z" class="cat-nose" />
+
+                                <!-- Mouth -->
+                                <path id="mouth" d="M 96 98 Q 100 102 104 98" stroke="#1F2937" stroke-width="2"
+                                    fill="none" stroke-linecap="round" />
+
+                                <!-- Whiskers -->
+                                <g stroke="#1F2937" stroke-width="1" opacity="0.5">
+                                    <line x1="60" y1="85" x2="80" y2="88" />
+                                    <line x1="60" y1="92" x2="80" y2="92" />
+                                    <line x1="140" y1="85" x2="120" y2="88" />
+                                    <line x1="140" y1="92" x2="120" y2="92" />
+                                </g>
                             </g>
-
-                            <!-- Nose -->
-                            <path d="M 96 90 L 104 90 L 100 95 Z" class="cat-nose" />
-
-                            <!-- Mouth -->
-                            <path id="mouth" d="M 96 98 Q 100 102 104 98" stroke="#1F2937" stroke-width="2" fill="none"
-                                stroke-linecap="round" />
-
-                            <!-- Whiskers -->
-                            <g stroke="#1F2937" stroke-width="1" opacity="0.5">
-                                <line x1="60" y1="85" x2="80" y2="88" />
-                                <line x1="60" y1="92" x2="80" y2="92" />
-                                <line x1="140" y1="85" x2="120" y2="88" />
-                                <line x1="140" y1="92" x2="120" y2="92" />
-                            </g>
+                            <!-- Accessories Container -->
+                            <g id="accessories-layer"></g>
                         </g>
                     </g>
-                </g>
-            </svg>
+                </svg>
+            </div>
+
+            <div class="controls">
+                <button class="btn" onclick="game.interact('feed')">
+                    <span class="btn-icon">🐟</span>
+                    <span class="btn-label">Feed</span>
+                </button>
+                <button class="btn" onclick="game.interact('sleep')">
+                    <span class="btn-icon">💤</span>
+                    <span class="btn-label">Sleep</span>
+                </button>
+                <button class="btn" onclick="game.interact('play')">
+                    <span class="btn-icon">🧶</span>
+                    <span class="btn-label">Play</span>
+                </button>
+                <button class="btn" onclick="game.interact('clean')">
+                    <span class="btn-icon">✨</span>
+                    <span class="btn-label">Clean</span>
+                </button>
+            </div>
+
+            <div class="toast" id="toast">Level Up!</div>
+
+            <div class="game-over" id="game-over">
+                <h2>Oh no!</h2>
+                <p>Your pet ran away...</p>
+                <button class="restart-btn" onclick="game.restart()">Try Again</button>
+            </div>
         </div>
 
-        <div class="controls">
-            <button class="btn" onclick="game.interact('feed')">
-                <span class="btn-icon">🐟</span>
-                <span class="btn-label">Feed</span>
-            </button>
-            <button class="btn" onclick="game.interact('sleep')">
-                <span class="btn-icon">💤</span>
-                <span class="btn-label">Sleep</span>
-            </button>
-            <button class="btn" onclick="game.interact('play')">
-                <span class="btn-icon">🧶</span>
-                <span class="btn-label">Play</span>
-            </button>
-            <button class="btn" onclick="game.interact('clean')">
-                <span class="btn-icon">✨</span>
-                <span class="btn-label">Clean</span>
-            </button>
-        </div>
-
-        <div class="toast" id="toast">Level Up!</div>
-
-        <div class="game-over" id="game-over">
-            <h2>Oh no!</h2>
-            <p>Your pet ran away...</p>
-            <button class="restart-btn" onclick="game.restart()">Try Again</button>
+        <div class="shop-container">
+            <div class="shop-header">
+                <span>Cat Shop</span>
+                <div class="coin-display">
+                    <span>🪙</span>
+                    <span id="coin-display">0</span>
+                </div>
+            </div>
+            <div class="shop-items" id="shop-items">
+                <!-- Items injected by JS -->
+            </div>
         </div>
     </div>
 
@@ -621,6 +801,7 @@
                 this.xp = 0;
                 this.level = 1;
                 this.xpToNext = 100;
+                this.coins = 50; // Starting coins
                 this.isSleeping = false;
                 this.isDead = false;
 
@@ -632,6 +813,21 @@
                     hygiene: 0.02
                 };
 
+                this.inventory = {
+                    'treat': 0,
+                    'toy': 0
+                };
+
+                this.activeAccessories = [];
+
+                this.shopItems = [
+                    { id: 'treat', name: 'Tasty Treat', icon: '🍬', price: 15, type: 'consumable', effect: 'hunger+50', desc: 'Restores 50% Hunger' },
+                    { id: 'toy', name: 'Mouse Toy', icon: '🐁', price: 25, type: 'consumable', effect: 'fun+50', desc: 'Restores 50% Fun' },
+                    { id: 'bow', name: 'Red Bow', icon: '🎀', price: 100, type: 'accessory', desc: 'A cute red bow' },
+                    { id: 'glasses', name: 'Cool Glasses', icon: '😎', price: 150, type: 'accessory', desc: 'Stylish eyewear' },
+                    { id: 'hat', name: 'Party Hat', icon: '🎩', price: 200, type: 'accessory', desc: 'Time to party!' }
+                ];
+
                 this.init();
             }
 
@@ -639,6 +835,7 @@
                 this.soundManager = new SoundManager();
                 this.startGameLoop();
                 this.updateUI();
+                this.renderShop();
 
                 // Add click handler to cat
                 document.getElementById('cat-svg').addEventListener('click', (e) => {
@@ -760,6 +957,106 @@
                 this.updateUI();
             }
 
+            buyItem(itemId) {
+                const item = this.shopItems.find(i => i.id === itemId);
+                if (!item) return;
+
+                if (this.coins >= item.price) {
+                    // Check if already owned accessory
+                    if (item.type === 'accessory' && this.activeAccessories.includes(itemId)) {
+                        this.showToast("Already wearing this!");
+                        return;
+                    }
+
+                    this.coins -= item.price;
+                    this.soundManager.play('feed'); // Use feed sound for purchase for now
+
+                    if (item.type === 'consumable') {
+                        this.useItem(item);
+                    } else if (item.type === 'accessory') {
+                        this.toggleAccessory(itemId);
+                    }
+
+                    this.updateUI();
+                    this.renderShop();
+                    this.showToast(`Bought ${item.name}!`);
+                } else {
+                    this.showToast("Not enough coins!");
+                }
+            }
+
+            useItem(item) {
+                if (item.effect === 'hunger+50') {
+                    this.stats.hunger = Math.min(100, this.stats.hunger + 50);
+                    this.spawnParticle(window.innerWidth / 2, window.innerHeight / 2, '🍬');
+                } else if (item.effect === 'fun+50') {
+                    this.stats.fun = Math.min(100, this.stats.fun + 50);
+                    this.spawnParticle(window.innerWidth / 2, window.innerHeight / 2, '🐁');
+                }
+            }
+
+            toggleAccessory(id) {
+                // Simple toggle: if wearing, remove. If not, add (and remove others of same type if needed)
+                // For now, let's just allow one accessory at a time for simplicity or stack them?
+                // Let's allow stacking different ones, but toggle off if clicked again?
+                // Actually, let's just add it.
+                if (!this.activeAccessories.includes(id)) {
+                    this.activeAccessories.push(id);
+                    this.renderAccessories();
+                }
+            }
+
+            renderAccessories() {
+                const container = document.getElementById('accessories-layer');
+                container.innerHTML = '';
+
+                this.activeAccessories.forEach(id => {
+                    let el;
+                    if (id === 'bow') {
+                        el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        el.setAttribute("d", "M 100 150 L 90 140 L 100 145 L 110 140 Z M 100 145 L 95 155 L 100 150 L 105 155 Z");
+                        el.setAttribute("class", "cat-accessory accessory-bow");
+                        // Adjust position to neck
+                        el.setAttribute("transform", "translate(0, -5) scale(1.5) translate(-33, -48)");
+                    } else if (id === 'glasses') {
+                        el = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                        el.innerHTML = '<circle cx="85" cy="80" r="10" /><circle cx="115" cy="80" r="10" /><line x1="95" y1="80" x2="105" y2="80" />';
+                        el.setAttribute("class", "cat-accessory accessory-glasses");
+                    } else if (id === 'hat') {
+                        el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        el.setAttribute("d", "M 80 50 L 100 10 L 120 50 Z");
+                        el.setAttribute("class", "cat-accessory accessory-hat");
+                    }
+
+                    if (el) container.appendChild(el);
+                });
+            }
+
+            renderShop() {
+                const container = document.getElementById('shop-items');
+                container.innerHTML = '';
+
+                this.shopItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = `shop-item ${this.coins < item.price ? 'disabled' : ''}`;
+                    div.onclick = () => this.buyItem(item.id);
+
+                    div.innerHTML = `
+                <div class="item-icon">${item.icon}</div>
+                <div class="item-details">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-desc">${item.desc}</div>
+                </div>
+                <div class="item-price">
+                    <span>🪙</span> ${item.price}
+                </div>
+            `;
+                    container.appendChild(div);
+                });
+
+                document.getElementById('coin-display').textContent = this.coins;
+            }
+
             toggleSleep(sleeping) {
                 this.isSleeping = sleeping;
                 const cat = document.getElementById('cat-svg');
@@ -791,7 +1088,12 @@
                 this.level++;
                 this.xp -= this.xpToNext;
                 this.xpToNext = Math.floor(this.xpToNext * 1.5);
-                this.showToast(`Level Up! Lvl ${this.level}`);
+
+                // Award coins
+                const coinReward = 20 * this.level;
+                this.coins += coinReward;
+
+                this.showToast(`Level Up! +${coinReward} Coins`);
                 this.spawnParticle(window.innerWidth / 2, window.innerHeight / 2, '⭐');
                 this.soundManager.play('levelup');
 
@@ -800,6 +1102,9 @@
                 this.stats.energy = 100;
                 this.stats.fun = 100;
                 this.stats.hygiene = 100;
+
+                this.updateUI();
+                this.renderShop();
             }
 
             checkState() {
@@ -821,6 +1126,10 @@
                 this.xp = 0;
                 this.level = 1;
                 this.xpToNext = 100;
+                this.coins = 50;
+                this.activeAccessories = [];
+                this.renderAccessories();
+
                 this.isSleeping = false;
                 this.isDead = false;
                 document.getElementById('game-over').classList.remove('visible');
@@ -847,6 +1156,9 @@
                 const xpPct = (this.xp / this.xpToNext) * 100;
                 document.getElementById('xp-bar').style.width = `${xpPct}%`;
                 document.getElementById('level-display').textContent = this.level;
+
+                // Update Coins
+                document.getElementById('coin-display').textContent = this.coins;
 
                 // Update Cat Mood
                 const mouth = document.getElementById('mouth');
