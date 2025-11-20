@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -150,44 +151,111 @@
             cursor: pointer;
             transition: transform 0.1s;
         }
-        
+
         #cat-svg:active {
             transform: scale(0.95);
         }
 
-        .cat-body { fill: #9CA3AF; }
-        .cat-belly { fill: #E5E7EB; }
-        .cat-eye { fill: #1F2937; }
-        .cat-nose { fill: #F472B6; }
-        .cat-ear { fill: #9CA3AF; }
-        .cat-ear-inner { fill: #F472B6; }
-        .cat-tail { fill: #9CA3AF; stroke: #9CA3AF; stroke-width: 15; stroke-linecap: round; fill: none; }
-        
+        .cat-body {
+            fill: #9CA3AF;
+        }
+
+        .cat-belly {
+            fill: #E5E7EB;
+        }
+
+        .cat-eye {
+            fill: #1F2937;
+        }
+
+        .cat-nose {
+            fill: #F472B6;
+        }
+
+        .cat-ear {
+            fill: #9CA3AF;
+        }
+
+        .cat-ear-inner {
+            fill: #F472B6;
+        }
+
+        .cat-tail {
+            fill: #9CA3AF;
+            stroke: #9CA3AF;
+            stroke-width: 15;
+            stroke-linecap: round;
+            fill: none;
+        }
+
         /* Animations */
         @keyframes breathe {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(1.02); }
+
+            0%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            50% {
+                transform: scaleY(1.02);
+            }
         }
-        
+
         @keyframes tail-wag {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
+
+            0%,
+            100% {
+                transform: rotate(-5deg);
+            }
+
+            50% {
+                transform: rotate(5deg);
+            }
         }
 
         @keyframes blink {
-            0%, 90%, 100% { transform: scaleY(1); }
-            95% { transform: scaleY(0.1); }
+
+            0%,
+            90%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            95% {
+                transform: scaleY(0.1);
+            }
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
-        .animate-breathe { animation: breathe 3s infinite ease-in-out; transform-origin: bottom center; }
-        .animate-tail { animation: tail-wag 2s infinite ease-in-out; transform-origin: 20% 80%; }
-        .animate-blink { animation: blink 4s infinite; transform-origin: center; }
-        .animate-float { animation: float 3s infinite ease-in-out; }
+        .animate-breathe {
+            animation: breathe 3s infinite ease-in-out;
+            transform-origin: bottom center;
+        }
+
+        .animate-tail {
+            animation: tail-wag 2s infinite ease-in-out;
+            transform-origin: 20% 80%;
+        }
+
+        .animate-blink {
+            animation: blink 4s infinite;
+            transform-origin: center;
+        }
+
+        .animate-float {
+            animation: float 3s infinite ease-in-out;
+        }
 
         /* Controls */
         .controls {
@@ -241,15 +309,31 @@
         }
 
         @keyframes rise-fade {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-50px) scale(1.5);
+                opacity: 0;
+            }
         }
 
         /* Mood States */
-        .mood-happy .cat-eye { clip-path: none; }
-        .mood-sad .cat-eye { clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%); }
-        .mood-sleep .cat-eye { transform: scaleY(0.1); animation: none; }
-        
+        .mood-happy .cat-eye {
+            clip-path: none;
+        }
+
+        .mood-sad .cat-eye {
+            clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .mood-sleep .cat-eye {
+            transform: scaleY(0.1);
+            animation: none;
+        }
+
         /* Notifications */
         .toast {
             position: absolute;
@@ -265,7 +349,7 @@
             transition: all 0.3s;
             z-index: 100;
         }
-        
+
         .toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
@@ -275,7 +359,7 @@
         .game-over {
             position: absolute;
             inset: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -286,12 +370,12 @@
             pointer-events: none;
             transition: opacity 0.5s;
         }
-        
+
         .game-over.visible {
             opacity: 1;
             pointer-events: all;
         }
-        
+
         .restart-btn {
             margin-top: 1rem;
             padding: 0.75rem 2rem;
@@ -304,371 +388,590 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="game-container">
-    <div class="header">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="font-size: 1.25rem;">Purrfect Pal</h1>
-            <div class="level-badge">
-                <span>⭐ Lvl <span id="level-display">1</span></span>
+    <div class="game-container">
+        <div class="header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1 style="font-size: 1.25rem;">Purrfect Pal</h1>
+                <div class="level-badge">
+                    <span>⭐ Lvl <span id="level-display">1</span></span>
+                </div>
+            </div>
+            <div class="xp-bar-container">
+                <div class="xp-bar-fill" id="xp-bar"></div>
             </div>
         </div>
-        <div class="xp-bar-container">
-            <div class="xp-bar-fill" id="xp-bar"></div>
-        </div>
-    </div>
 
-    <div class="stats-grid">
-        <div class="stat-item">
-            <div class="stat-label"><span>Hunger</span> <span id="hunger-val">100%</span></div>
-            <div class="progress-bar"><div class="progress-fill" id="hunger-bar" style="background: var(--success);"></div></div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-label"><span>Hunger</span> <span id="hunger-val">100%</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="hunger-bar" style="background: var(--success);"></div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label"><span>Energy</span> <span id="energy-val">100%</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="energy-bar" style="background: var(--success);"></div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label"><span>Fun</span> <span id="fun-val">100%</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="fun-bar" style="background: var(--success);"></div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label"><span>Hygiene</span> <span id="hygiene-val">100%</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="hygiene-bar" style="background: var(--success);"></div>
+                </div>
+            </div>
         </div>
-        <div class="stat-item">
-            <div class="stat-label"><span>Energy</span> <span id="energy-val">100%</span></div>
-            <div class="progress-bar"><div class="progress-fill" id="energy-bar" style="background: var(--success);"></div></div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-label"><span>Fun</span> <span id="fun-val">100%</span></div>
-            <div class="progress-bar"><div class="progress-fill" id="fun-bar" style="background: var(--success);"></div></div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-label"><span>Hygiene</span> <span id="hygiene-val">100%</span></div>
-            <div class="progress-bar"><div class="progress-fill" id="hygiene-bar" style="background: var(--success);"></div></div>
-        </div>
-    </div>
 
-    <div class="scene">
-        <!-- SVG Cat -->
-        <svg id="cat-svg" viewBox="0 0 200 200" class="animate-float">
-            <g class="animate-breathe">
-                <!-- Tail -->
-                <path d="M 140 150 Q 170 120 160 90" class="cat-tail animate-tail" />
-                
-                <!-- Body -->
-                <ellipse cx="100" cy="140" rx="50" ry="45" class="cat-body" />
-                <ellipse cx="100" cy="145" rx="30" ry="35" class="cat-belly" />
-                
-                <!-- Head Group -->
-                <g transform="translate(0, -10)">
-                    <!-- Ears -->
-                    <path d="M 70 75 L 60 40 L 90 65 Z" class="cat-ear" />
-                    <path d="M 130 75 L 140 40 L 110 65 Z" class="cat-ear" />
-                    <path d="M 72 70 L 65 50 L 85 65 Z" class="cat-ear-inner" />
-                    <path d="M 128 70 L 135 50 L 115 65 Z" class="cat-ear-inner" />
+        <div class="scene">
+            <!-- SVG Cat -->
+            <svg id="cat-svg" viewBox="0 0 200 200" class="animate-float">
+                <g class="animate-breathe">
+                    <!-- Tail -->
+                    <path d="M 140 150 Q 170 120 160 90" class="cat-tail animate-tail" />
 
-                    <!-- Head Base -->
-                    <circle cx="100" cy="85" r="40" class="cat-body" />
+                    <!-- Body -->
+                    <ellipse cx="100" cy="140" rx="50" ry="45" class="cat-body" />
+                    <ellipse cx="100" cy="145" rx="30" ry="35" class="cat-belly" />
 
-                    <!-- Face -->
-                    <g id="face-features">
-                        <!-- Eyes -->
-                        <g class="animate-blink">
-                            <circle cx="85" cy="80" r="4" class="cat-eye" />
-                            <circle cx="115" cy="80" r="4" class="cat-eye" />
-                        </g>
-                        
-                        <!-- Nose -->
-                        <path d="M 96 90 L 104 90 L 100 95 Z" class="cat-nose" />
-                        
-                        <!-- Mouth -->
-                        <path id="mouth" d="M 96 98 Q 100 102 104 98" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round" />
-                        
-                        <!-- Whiskers -->
-                        <g stroke="#1F2937" stroke-width="1" opacity="0.5">
-                            <line x1="60" y1="85" x2="80" y2="88" />
-                            <line x1="60" y1="92" x2="80" y2="92" />
-                            <line x1="140" y1="85" x2="120" y2="88" />
-                            <line x1="140" y1="92" x2="120" y2="92" />
+                    <!-- Head Group -->
+                    <g transform="translate(0, -10)">
+                        <!-- Ears -->
+                        <path d="M 70 75 L 60 40 L 90 65 Z" class="cat-ear" />
+                        <path d="M 130 75 L 140 40 L 110 65 Z" class="cat-ear" />
+                        <path d="M 72 70 L 65 50 L 85 65 Z" class="cat-ear-inner" />
+                        <path d="M 128 70 L 135 50 L 115 65 Z" class="cat-ear-inner" />
+
+                        <!-- Head Base -->
+                        <circle cx="100" cy="85" r="40" class="cat-body" />
+
+                        <!-- Face -->
+                        <g id="face-features">
+                            <!-- Eyes -->
+                            <g class="animate-blink">
+                                <circle cx="85" cy="80" r="4" class="cat-eye" />
+                                <circle cx="115" cy="80" r="4" class="cat-eye" />
+                            </g>
+
+                            <!-- Nose -->
+                            <path d="M 96 90 L 104 90 L 100 95 Z" class="cat-nose" />
+
+                            <!-- Mouth -->
+                            <path id="mouth" d="M 96 98 Q 100 102 104 98" stroke="#1F2937" stroke-width="2" fill="none"
+                                stroke-linecap="round" />
+
+                            <!-- Whiskers -->
+                            <g stroke="#1F2937" stroke-width="1" opacity="0.5">
+                                <line x1="60" y1="85" x2="80" y2="88" />
+                                <line x1="60" y1="92" x2="80" y2="92" />
+                                <line x1="140" y1="85" x2="120" y2="88" />
+                                <line x1="140" y1="92" x2="120" y2="92" />
+                            </g>
                         </g>
                     </g>
                 </g>
-            </g>
-        </svg>
+            </svg>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="game.interact('feed')">
+                <span class="btn-icon">🐟</span>
+                <span class="btn-label">Feed</span>
+            </button>
+            <button class="btn" onclick="game.interact('sleep')">
+                <span class="btn-icon">💤</span>
+                <span class="btn-label">Sleep</span>
+            </button>
+            <button class="btn" onclick="game.interact('play')">
+                <span class="btn-icon">🧶</span>
+                <span class="btn-label">Play</span>
+            </button>
+            <button class="btn" onclick="game.interact('clean')">
+                <span class="btn-icon">✨</span>
+                <span class="btn-label">Clean</span>
+            </button>
+        </div>
+
+        <div class="toast" id="toast">Level Up!</div>
+
+        <div class="game-over" id="game-over">
+            <h2>Oh no!</h2>
+            <p>Your pet ran away...</p>
+            <button class="restart-btn" onclick="game.restart()">Try Again</button>
+        </div>
     </div>
 
-    <div class="controls">
-        <button class="btn" onclick="game.interact('feed')">
-            <span class="btn-icon">🐟</span>
-            <span class="btn-label">Feed</span>
-        </button>
-        <button class="btn" onclick="game.interact('sleep')">
-            <span class="btn-icon">💤</span>
-            <span class="btn-label">Sleep</span>
-        </button>
-        <button class="btn" onclick="game.interact('play')">
-            <span class="btn-icon">🧶</span>
-            <span class="btn-label">Play</span>
-        </button>
-        <button class="btn" onclick="game.interact('clean')">
-            <span class="btn-icon">✨</span>
-            <span class="btn-label">Clean</span>
-        </button>
-    </div>
+    <script>
+        class Game {
+            constructor() {
+                this.stats = {
+                    hunger: 80,
+                    energy: 80,
+                    fun: 80,
+                    hygiene: 80
+                };
 
-    <div class="toast" id="toast">Level Up!</div>
+                this.xp = 0;
+                this.level = 1;
+                this.xpToNext = 100;
+                this.isSleeping = false;
+                this.isDead = false;
 
-    <div class="game-over" id="game-over">
-        <h2>Oh no!</h2>
-        <p>Your pet ran away...</p>
-        <button class="restart-btn" onclick="game.restart()">Try Again</button>
-    </div>
-</div>
+                this.loopId = null;
+                this.decayRates = {
+                    hunger: 0.05,
+                    energy: 0.03,
+                    fun: 0.04,
+                    hygiene: 0.02
+                };
 
-<script>
-class Game {
-    constructor() {
-        this.stats = {
-            hunger: 80,
-            energy: 80,
-            fun: 80,
-            hygiene: 80
-        };
-        
-        this.xp = 0;
-        this.level = 1;
-        this.xpToNext = 100;
-        this.isSleeping = false;
-        this.isDead = false;
-        
-        this.loopId = null;
-        this.decayRates = {
-            hunger: 0.05,
-            energy: 0.03,
-            fun: 0.04,
-            hygiene: 0.02
-        };
+                this.init();
+            }
 
-        this.init();
-    }
+            init() {
+                this.soundManager = new SoundManager();
+                this.startGameLoop();
+                this.updateUI();
 
-    init() {
-        this.startGameLoop();
-        this.updateUI();
-        
-        // Add click handler to cat
-        document.getElementById('cat-svg').addEventListener('click', (e) => {
-            if (this.isDead) return;
-            this.spawnParticle(e.clientX, e.clientY, '❤️');
-            this.interact('pet');
-        });
-    }
+                // Add click handler to cat
+                document.getElementById('cat-svg').addEventListener('click', (e) => {
+                    if (this.isDead) return;
+                    this.spawnParticle(e.clientX, e.clientY, '❤️');
+                    this.interact('pet');
+                });
 
-    startGameLoop() {
-        if (this.loopId) clearInterval(this.loopId);
-        this.loopId = setInterval(() => this.tick(), 100);
-    }
+                // Add mute button
+                const controls = document.querySelector('.controls');
+                const muteBtn = document.createElement('button');
+                muteBtn.className = 'btn';
+                muteBtn.innerHTML = '<span class="btn-icon">🔊</span><span class="btn-label">Mute</span>';
+                muteBtn.onclick = () => {
+                    const isMuted = this.soundManager.toggleMute();
+                    muteBtn.querySelector('.btn-icon').textContent = isMuted ? '🔇' : '🔊';
+                    muteBtn.querySelector('.btn-label').textContent = isMuted ? 'Unmute' : 'Mute';
+                };
+                controls.appendChild(muteBtn);
+                // Adjust grid columns for 5 buttons
+                controls.style.gridTemplateColumns = 'repeat(5, 1fr)';
+            }
 
-    tick() {
-        if (this.isDead) return;
+            startGameLoop() {
+                if (this.loopId) clearInterval(this.loopId);
+                this.loopId = setInterval(() => this.tick(), 100);
+            }
 
-        // Decay stats
-        if (!this.isSleeping) {
-            this.stats.hunger = Math.max(0, this.stats.hunger - this.decayRates.hunger);
-            this.stats.energy = Math.max(0, this.stats.energy - this.decayRates.energy);
-            this.stats.fun = Math.max(0, this.stats.fun - this.decayRates.fun);
-            this.stats.hygiene = Math.max(0, this.stats.hygiene - this.decayRates.hygiene);
-        } else {
-            // Regenerate energy while sleeping
-            this.stats.energy = Math.min(100, this.stats.energy + 0.2);
-            this.stats.hunger = Math.max(0, this.stats.hunger - (this.decayRates.hunger * 0.5));
-            
-            // Wake up if full energy
-            if (this.stats.energy >= 100) {
-                this.toggleSleep(false);
-                this.showToast("Fully Rested!");
+            tick() {
+                if (this.isDead) return;
+
+                // Decay stats
+                if (!this.isSleeping) {
+                    this.stats.hunger = Math.max(0, this.stats.hunger - this.decayRates.hunger);
+                    this.stats.energy = Math.max(0, this.stats.energy - this.decayRates.energy);
+                    this.stats.fun = Math.max(0, this.stats.fun - this.decayRates.fun);
+                    this.stats.hygiene = Math.max(0, this.stats.hygiene - this.decayRates.hygiene);
+                } else {
+                    // Regenerate energy while sleeping
+                    this.stats.energy = Math.min(100, this.stats.energy + 0.2);
+                    this.stats.hunger = Math.max(0, this.stats.hunger - (this.decayRates.hunger * 0.5));
+
+                    // Wake up if full energy
+                    if (this.stats.energy >= 100) {
+                        this.toggleSleep(false);
+                        this.showToast("Fully Rested!");
+                    }
+                }
+
+                this.checkState();
+                this.updateUI();
+            }
+
+            interact(action) {
+                if (this.isDead) return;
+
+                // Initialize audio context on first interaction
+                if (this.soundManager.ctx.state === 'suspended') {
+                    this.soundManager.ctx.resume();
+                }
+
+                if (this.isSleeping && action !== 'sleep') {
+                    this.showToast("Zzz... (Wake up first)");
+                    return;
+                }
+
+                const center = document.querySelector('.scene').getBoundingClientRect();
+                const cx = center.left + center.width / 2;
+                const cy = center.top + center.height / 2;
+
+                let xpGain = 0;
+
+                switch (action) {
+                    case 'feed':
+                        if (this.stats.hunger >= 95) {
+                            this.showToast("Not hungry!");
+                            return;
+                        }
+                        this.stats.hunger = Math.min(100, this.stats.hunger + 30);
+                        this.stats.hygiene = Math.max(0, this.stats.hygiene - 5);
+                        this.spawnParticle(cx, cy, '🐟');
+                        this.soundManager.play('feed');
+                        xpGain = 10;
+                        break;
+                    case 'sleep':
+                        this.toggleSleep(!this.isSleeping);
+                        return;
+                    case 'play':
+                        if (this.stats.energy < 20) {
+                            this.showToast("Too tired...");
+                            return;
+                        }
+                        this.stats.fun = Math.min(100, this.stats.fun + 30);
+                        this.stats.energy = Math.max(0, this.stats.energy - 15);
+                        this.stats.hunger = Math.max(0, this.stats.hunger - 10);
+                        this.spawnParticle(cx, cy, '🧶');
+                        this.soundManager.play('play');
+                        xpGain = 15;
+                        break;
+                    case 'clean':
+                        if (this.stats.hygiene >= 95) {
+                            this.showToast("Already clean!");
+                            return;
+                        }
+                        this.stats.hygiene = Math.min(100, this.stats.hygiene + 40);
+                        this.stats.fun = Math.max(0, this.stats.fun - 5);
+                        this.spawnParticle(cx, cy, '✨');
+                        this.soundManager.play('clean');
+                        xpGain = 10;
+                        break;
+                    case 'pet':
+                        this.stats.fun = Math.min(100, this.stats.fun + 5);
+                        this.soundManager.play('purr');
+                        xpGain = 2;
+                        break;
+                }
+
+                this.gainXP(xpGain);
+                this.updateUI();
+            }
+
+            toggleSleep(sleeping) {
+                this.isSleeping = sleeping;
+                const cat = document.getElementById('cat-svg');
+                const eyes = document.querySelector('.animate-blink');
+
+                if (sleeping) {
+                    cat.classList.remove('animate-float');
+                    eyes.style.animation = 'none';
+                    eyes.style.transform = 'scaleY(0.1)';
+                    this.showToast("Goodnight!");
+                    this.soundManager.play('sleep');
+                } else {
+                    cat.classList.add('animate-float');
+                    eyes.style.animation = '';
+                    eyes.style.transform = '';
+                    this.showToast("Good Morning!");
+                    this.soundManager.play('play'); // Wake up sound
+                }
+            }
+
+            gainXP(amount) {
+                this.xp += amount;
+                if (this.xp >= this.xpToNext) {
+                    this.levelUp();
+                }
+            }
+
+            levelUp() {
+                this.level++;
+                this.xp -= this.xpToNext;
+                this.xpToNext = Math.floor(this.xpToNext * 1.5);
+                this.showToast(`Level Up! Lvl ${this.level}`);
+                this.spawnParticle(window.innerWidth / 2, window.innerHeight / 2, '⭐');
+                this.soundManager.play('levelup');
+
+                // Full restore on level up
+                this.stats.hunger = 100;
+                this.stats.energy = 100;
+                this.stats.fun = 100;
+                this.stats.hygiene = 100;
+            }
+
+            checkState() {
+                // Check for game over
+                if (this.stats.hunger <= 0 || this.stats.fun <= 0 || this.stats.hygiene <= 0) {
+                    this.gameOver();
+                }
+            }
+
+            gameOver() {
+                this.isDead = true;
+                clearInterval(this.loopId);
+                document.getElementById('game-over').classList.add('visible');
+                this.soundManager.play('gameover');
+            }
+
+            restart() {
+                this.stats = { hunger: 80, energy: 80, fun: 80, hygiene: 80 };
+                this.xp = 0;
+                this.level = 1;
+                this.xpToNext = 100;
+                this.isSleeping = false;
+                this.isDead = false;
+                document.getElementById('game-over').classList.remove('visible');
+
+                // Remove mute button to avoid duplicates on re-init (or just reset state)
+                const controls = document.querySelector('.controls');
+                if (controls.children.length > 4) {
+                    controls.lastChild.remove();
+                    controls.style.gridTemplateColumns = 'repeat(4, 1fr)';
+                }
+
+                this.init();
+                this.soundManager.play('levelup'); // Start sound
+            }
+
+            updateUI() {
+                // Update Stats
+                this.updateBar('hunger', this.stats.hunger);
+                this.updateBar('energy', this.stats.energy);
+                this.updateBar('fun', this.stats.fun);
+                this.updateBar('hygiene', this.stats.hygiene);
+
+                // Update XP
+                const xpPct = (this.xp / this.xpToNext) * 100;
+                document.getElementById('xp-bar').style.width = `${xpPct}%`;
+                document.getElementById('level-display').textContent = this.level;
+
+                // Update Cat Mood
+                const mouth = document.getElementById('mouth');
+                const avgStat = (this.stats.hunger + this.stats.energy + this.stats.fun + this.stats.hygiene) / 4;
+
+                if (this.isSleeping) {
+                    // Sleeping mouth (small o)
+                    mouth.setAttribute('d', 'M 98 98 A 2 2 0 1 1 102 98');
+                } else if (avgStat > 70) {
+                    // Happy
+                    mouth.setAttribute('d', 'M 96 98 Q 100 102 104 98');
+                } else if (avgStat > 40) {
+                    // Neutral
+                    mouth.setAttribute('d', 'M 96 100 L 104 100');
+                } else {
+                    // Sad
+                    mouth.setAttribute('d', 'M 96 102 Q 100 98 104 102');
+                }
+            }
+
+            updateBar(type, value) {
+                const bar = document.getElementById(`${type}-bar`);
+                const val = document.getElementById(`${type}-val`);
+
+                bar.style.width = `${value}%`;
+                val.textContent = `${Math.floor(value)}%`;
+
+                // Color coding
+                if (value > 60) bar.style.background = 'var(--success)';
+                else if (value > 30) bar.style.background = 'var(--warning)';
+                else bar.style.background = 'var(--danger)';
+            }
+
+            showToast(msg) {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            }
+
+            spawnParticle(x, y, emoji) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = emoji;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
             }
         }
 
-        this.checkState();
-        this.updateUI();
-    }
+        class SoundManager {
+            constructor() {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.muted = false;
+            }
 
-    interact(action) {
-        if (this.isDead) return;
-        if (this.isSleeping && action !== 'sleep') {
-            this.showToast("Zzz... (Wake up first)");
-            return;
-        }
-
-        const center = document.querySelector('.scene').getBoundingClientRect();
-        const cx = center.left + center.width / 2;
-        const cy = center.top + center.height / 2;
-
-        let xpGain = 0;
-
-        switch(action) {
-            case 'feed':
-                if (this.stats.hunger >= 95) {
-                    this.showToast("Not hungry!");
-                    return;
+            toggleMute() {
+                this.muted = !this.muted;
+                if (this.muted) {
+                    this.ctx.suspend();
+                } else {
+                    this.ctx.resume();
                 }
-                this.stats.hunger = Math.min(100, this.stats.hunger + 30);
-                this.stats.hygiene = Math.max(0, this.stats.hygiene - 5);
-                this.spawnParticle(cx, cy, '🐟');
-                xpGain = 10;
-                break;
-            case 'sleep':
-                this.toggleSleep(!this.isSleeping);
-                return;
-            case 'play':
-                if (this.stats.energy < 20) {
-                    this.showToast("Too tired...");
-                    return;
+                return this.muted;
+            }
+
+            play(type) {
+                if (this.muted) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+
+                switch (type) {
+                    case 'feed': this.playFeed(); break;
+                    case 'play': this.playJump(); break;
+                    case 'clean': this.playSparkle(); break;
+                    case 'sleep': this.playLullaby(); break;
+                    case 'levelup': this.playFanfare(); break;
+                    case 'gameover': this.playSad(); break;
+                    case 'purr': this.playPurr(); break;
                 }
-                this.stats.fun = Math.min(100, this.stats.fun + 30);
-                this.stats.energy = Math.max(0, this.stats.energy - 15);
-                this.stats.hunger = Math.max(0, this.stats.hunger - 10);
-                this.spawnParticle(cx, cy, '🧶');
-                xpGain = 15;
-                break;
-            case 'clean':
-                if (this.stats.hygiene >= 95) {
-                    this.showToast("Already clean!");
-                    return;
+            }
+
+            // Sound Synthesis Methods
+
+            playFeed() {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(200, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.1);
+
+                // Second crunch
+                setTimeout(() => {
+                    const osc2 = this.ctx.createOscillator();
+                    const gain2 = this.ctx.createGain();
+                    osc2.type = 'triangle';
+                    osc2.frequency.setValueAtTime(250, this.ctx.currentTime);
+                    osc2.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.1);
+                    gain2.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                    osc2.connect(gain2);
+                    gain2.connect(this.ctx.destination);
+                    osc2.start();
+                    osc2.stop(this.ctx.currentTime + 0.1);
+                }, 150);
+            }
+
+            playJump() {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(600, this.ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.2);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.2);
+            }
+
+            playSparkle() {
+                const now = this.ctx.currentTime;
+                for (let i = 0; i < 5; i++) {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800 + i * 200, now + i * 0.05);
+                    gain.gain.setValueAtTime(0.1, now + i * 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.1);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + i * 0.05);
+                    osc.stop(now + i * 0.05 + 0.1);
                 }
-                this.stats.hygiene = Math.min(100, this.stats.hygiene + 40);
-                this.stats.fun = Math.max(0, this.stats.fun - 5);
-                this.spawnParticle(cx, cy, '✨');
-                xpGain = 10;
-                break;
-            case 'pet':
-                this.stats.fun = Math.min(100, this.stats.fun + 5);
-                xpGain = 2;
-                break;
+            }
+
+            playLullaby() {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 1);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 1);
+            }
+
+            playFanfare() {
+                const now = this.ctx.currentTime;
+                [440, 554, 659, 880].forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.1, now + i * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + i * 0.1);
+                    osc.stop(now + i * 0.1 + 0.3);
+                });
+            }
+
+            playSad() {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, this.ctx.currentTime + 1);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 1);
+            }
+
+            playPurr() {
+                // Simple purr using low frequency sawtooth + noise approximation
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(25, this.ctx.currentTime);
+
+                // AM Modulation for purr texture
+                const lfo = this.ctx.createOscillator();
+                lfo.type = 'sine';
+                lfo.frequency.value = 10; // 10Hz purr rattle
+                const lfoGain = this.ctx.createGain();
+                lfoGain.gain.value = 50; // Depth of modulation
+
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start();
+                lfo.start();
+                osc.stop(this.ctx.currentTime + 1);
+                lfo.stop(this.ctx.currentTime + 1);
+            }
         }
 
-        this.gainXP(xpGain);
-        this.updateUI();
-    }
-
-    toggleSleep(sleeping) {
-        this.isSleeping = sleeping;
-        const cat = document.getElementById('cat-svg');
-        const eyes = document.querySelector('.animate-blink');
-        
-        if (sleeping) {
-            cat.classList.remove('animate-float');
-            eyes.style.animation = 'none';
-            eyes.style.transform = 'scaleY(0.1)';
-            this.showToast("Goodnight!");
-        } else {
-            cat.classList.add('animate-float');
-            eyes.style.animation = '';
-            eyes.style.transform = '';
-            this.showToast("Good Morning!");
-        }
-    }
-
-    gainXP(amount) {
-        this.xp += amount;
-        if (this.xp >= this.xpToNext) {
-            this.levelUp();
-        }
-    }
-
-    levelUp() {
-        this.level++;
-        this.xp -= this.xpToNext;
-        this.xpToNext = Math.floor(this.xpToNext * 1.5);
-        this.showToast(`Level Up! Lvl ${this.level}`);
-        this.spawnParticle(window.innerWidth/2, window.innerHeight/2, '⭐');
-        
-        // Full restore on level up
-        this.stats.hunger = 100;
-        this.stats.energy = 100;
-        this.stats.fun = 100;
-        this.stats.hygiene = 100;
-    }
-
-    checkState() {
-        // Check for game over
-        if (this.stats.hunger <= 0 || this.stats.fun <= 0 || this.stats.hygiene <= 0) {
-            this.gameOver();
-        }
-    }
-
-    gameOver() {
-        this.isDead = true;
-        clearInterval(this.loopId);
-        document.getElementById('game-over').classList.add('visible');
-    }
-
-    restart() {
-        this.stats = { hunger: 80, energy: 80, fun: 80, hygiene: 80 };
-        this.xp = 0;
-        this.level = 1;
-        this.xpToNext = 100;
-        this.isSleeping = false;
-        this.isDead = false;
-        document.getElementById('game-over').classList.remove('visible');
-        this.init();
-    }
-
-    updateUI() {
-        // Update Stats
-        this.updateBar('hunger', this.stats.hunger);
-        this.updateBar('energy', this.stats.energy);
-        this.updateBar('fun', this.stats.fun);
-        this.updateBar('hygiene', this.stats.hygiene);
-
-        // Update XP
-        const xpPct = (this.xp / this.xpToNext) * 100;
-        document.getElementById('xp-bar').style.width = `${xpPct}%`;
-        document.getElementById('level-display').textContent = this.level;
-
-        // Update Cat Mood
-        const mouth = document.getElementById('mouth');
-        const avgStat = (this.stats.hunger + this.stats.energy + this.stats.fun + this.stats.hygiene) / 4;
-        
-        if (this.isSleeping) {
-            // Sleeping mouth (small o)
-            mouth.setAttribute('d', 'M 98 98 A 2 2 0 1 1 102 98');
-        } else if (avgStat > 70) {
-            // Happy
-            mouth.setAttribute('d', 'M 96 98 Q 100 102 104 98');
-        } else if (avgStat > 40) {
-            // Neutral
-            mouth.setAttribute('d', 'M 96 100 L 104 100');
-        } else {
-            // Sad
-            mouth.setAttribute('d', 'M 96 102 Q 100 98 104 102');
-        }
-    }
-
-    updateBar(type, value) {
-        const bar = document.getElementById(`${type}-bar`);
-        const val = document.getElementById(`${type}-val`);
-        
-        bar.style.width = `${value}%`;
-        val.textContent = `${Math.floor(value)}%`;
-
-        // Color coding
-        if (value > 60) bar.style.background = 'var(--success)';
-        else if (value > 30) bar.style.background = 'var(--warning)';
-        else bar.style.background = 'var(--danger)';
-    }
-
-    showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
-    }
-
-    spawnParticle(x, y, emoji) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.textContent = emoji;
-        particle.style.left = `${x}px`;
-        particle.style.top = `${y}px`;
-        document.body.appendChild(particle);
-        setTimeout(() => particle.remove(), 1000);
-    }
-}
-
-// Start Game
-const game = new Game();
-</script>
+        // Start Game
+        const game = new Game();
+    </script>
 </body>
+
 </html>
