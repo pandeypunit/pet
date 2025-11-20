@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purrfect Pal - Virtual Pet</title>
+    <style>
+        :root {
+            --primary: #8B5CF6;
+            --primary-dark: #7C3AED;
+            --secondary: #F472B6;
+            --bg: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --danger: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .game-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            max-height: 850px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-radius: 0;
+        }
+
+        @media (min-width: 480px) {
+            .game-container {
+                height: 90vh;
+                border-radius: 2rem;
+                overflow: hidden;
+            }
+        }
+
+        /* Header & Stats */
+        .header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 0 0 2rem 2rem;
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .level-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .xp-bar-container {
+            margin-top: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .xp-bar-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.5s ease-out;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        .stat-item {
+            background: var(--bg);
+            padding: 0.75rem;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* Main Scene */
+        .scene {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #fff 0%, #f3f4f6 100%);
+        }
+
+        /* SVG Cat Styles */
+        #cat-svg {
+            width: 250px;
+            height: 250px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        #cat-svg:active {
+            transform: scale(0.95);
+        }
+
+        .cat-body { fill: #9CA3AF; }
+        .cat-belly { fill: #E5E7EB; }
+        .cat-eye { fill: #1F2937; }
+        .cat-nose { fill: #F472B6; }
+        .cat-ear { fill: #9CA3AF; }
+        .cat-ear-inner { fill: #F472B6; }
+        .cat-tail { fill: #9CA3AF; stroke: #9CA3AF; stroke-width: 15; stroke-linecap: round; fill: none; }
+        
+        /* Animations */
+        @keyframes breathe {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.02); }
+        }
+        
+        @keyframes tail-wag {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .animate-breathe { animation: breathe 3s infinite ease-in-out; transform-origin: bottom center; }
+        .animate-tail { animation: tail-wag 2s infinite ease-in-out; transform-origin: 20% 80%; }
+        .animate-blink { animation: blink 4s infinite; transform-origin: center; }
+        .animate-float { animation: float 3s infinite ease-in-out; }
+
+        /* Controls */
+        .controls {
+            padding: 1.5rem;
+            background: white;
+            border-radius: 2rem 2rem 0 0;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .btn {
+            border: none;
+            background: var(--bg);
+            padding: 1rem 0.5rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            color: var(--text-light);
+        }
+
+        .btn:hover {
+            background: #E5E7EB;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-icon {
+            font-size: 1.5rem;
+        }
+
+        .btn-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: rise-fade 1s forwards;
+            font-size: 1.5rem;
+        }
+
+        @keyframes rise-fade {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+        }
+
+        /* Mood States */
+        .mood-happy .cat-eye { clip-path: none; }
+        .mood-sad .cat-eye { clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%); }
+        .mood-sleep .cat-eye { transform: scaleY(0.1); animation: none; }
+        
+        /* Notifications */
+        .toast {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--text);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Dead State */
+        .game-over {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        
+        .game-over.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .restart-btn {
+            margin-top: 1rem;
+            padding: 0.75rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="font-size: 1.25rem;">Purrfect Pal</h1>
+            <div class="level-badge">
+                <span>⭐ Lvl <span id="level-display">1</span></span>
+            </div>
+        </div>
+        <div class="xp-bar-container">
+            <div class="xp-bar-fill" id="xp-bar"></div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-label"><span>Hunger</span> <span id="hunger-val">100%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="hunger-bar" style="background: var(--success);"></div></div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label"><span>Energy</span> <span id="energy-val">100%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="energy-bar" style="background: var(--success);"></div></div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label"><span>Fun</span> <span id="fun-val">100%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="fun-bar" style="background: var(--success);"></div></div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label"><span>Hygiene</span> <span id="hygiene-val">100%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="hygiene-bar" style="background: var(--success);"></div></div>
+        </div>
+    </div>
+
+    <div class="scene">
+        <!-- SVG Cat -->
+        <svg id="cat-svg" viewBox="0 0 200 200" class="animate-float">
+            <g class="animate-breathe">
+                <!-- Tail -->
+                <path d="M 140 150 Q 170 120 160 90" class="cat-tail animate-tail" />
+                
+                <!-- Body -->
+                <ellipse cx="100" cy="140" rx="50" ry="45" class="cat-body" />
+                <ellipse cx="100" cy="145" rx="30" ry="35" class="cat-belly" />
+                
+                <!-- Head Group -->
+                <g transform="translate(0, -10)">
+                    <!-- Ears -->
+                    <path d="M 70 75 L 60 40 L 90 65 Z" class="cat-ear" />
+                    <path d="M 130 75 L 140 40 L 110 65 Z" class="cat-ear" />
+                    <path d="M 72 70 L 65 50 L 85 65 Z" class="cat-ear-inner" />
+                    <path d="M 128 70 L 135 50 L 115 65 Z" class="cat-ear-inner" />
+
+                    <!-- Head Base -->
+                    <circle cx="100" cy="85" r="40" class="cat-body" />
+
+                    <!-- Face -->
+                    <g id="face-features">
+                        <!-- Eyes -->
+                        <g class="animate-blink">
+                            <circle cx="85" cy="80" r="4" class="cat-eye" />
+                            <circle cx="115" cy="80" r="4" class="cat-eye" />
+                        </g>
+                        
+                        <!-- Nose -->
+                        <path d="M 96 90 L 104 90 L 100 95 Z" class="cat-nose" />
+                        
+                        <!-- Mouth -->
+                        <path id="mouth" d="M 96 98 Q 100 102 104 98" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round" />
+                        
+                        <!-- Whiskers -->
+                        <g stroke="#1F2937" stroke-width="1" opacity="0.5">
+                            <line x1="60" y1="85" x2="80" y2="88" />
+                            <line x1="60" y1="92" x2="80" y2="92" />
+                            <line x1="140" y1="85" x2="120" y2="88" />
+                            <line x1="140" y1="92" x2="120" y2="92" />
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </svg>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="game.interact('feed')">
+            <span class="btn-icon">🐟</span>
+            <span class="btn-label">Feed</span>
+        </button>
+        <button class="btn" onclick="game.interact('sleep')">
+            <span class="btn-icon">💤</span>
+            <span class="btn-label">Sleep</span>
+        </button>
+        <button class="btn" onclick="game.interact('play')">
+            <span class="btn-icon">🧶</span>
+            <span class="btn-label">Play</span>
+        </button>
+        <button class="btn" onclick="game.interact('clean')">
+            <span class="btn-icon">✨</span>
+            <span class="btn-label">Clean</span>
+        </button>
+    </div>
+
+    <div class="toast" id="toast">Level Up!</div>
+
+    <div class="game-over" id="game-over">
+        <h2>Oh no!</h2>
+        <p>Your pet ran away...</p>
+        <button class="restart-btn" onclick="game.restart()">Try Again</button>
+    </div>
+</div>
+
+<script>
+class Game {
+    constructor() {
+        this.stats = {
+            hunger: 80,
+            energy: 80,
+            fun: 80,
+            hygiene: 80
+        };
+        
+        this.xp = 0;
+        this.level = 1;
+        this.xpToNext = 100;
+        this.isSleeping = false;
+        this.isDead = false;
+        
+        this.loopId = null;
+        this.decayRates = {
+            hunger: 0.05,
+            energy: 0.03,
+            fun: 0.04,
+            hygiene: 0.02
+        };
+
+        this.init();
+    }
+
+    init() {
+        this.startGameLoop();
+        this.updateUI();
+        
+        // Add click handler to cat
+        document.getElementById('cat-svg').addEventListener('click', (e) => {
+            if (this.isDead) return;
+            this.spawnParticle(e.clientX, e.clientY, '❤️');
+            this.interact('pet');
+        });
+    }
+
+    startGameLoop() {
+        if (this.loopId) clearInterval(this.loopId);
+        this.loopId = setInterval(() => this.tick(), 100);
+    }
+
+    tick() {
+        if (this.isDead) return;
+
+        // Decay stats
+        if (!this.isSleeping) {
+            this.stats.hunger = Math.max(0, this.stats.hunger - this.decayRates.hunger);
+            this.stats.energy = Math.max(0, this.stats.energy - this.decayRates.energy);
+            this.stats.fun = Math.max(0, this.stats.fun - this.decayRates.fun);
+            this.stats.hygiene = Math.max(0, this.stats.hygiene - this.decayRates.hygiene);
+        } else {
+            // Regenerate energy while sleeping
+            this.stats.energy = Math.min(100, this.stats.energy + 0.2);
+            this.stats.hunger = Math.max(0, this.stats.hunger - (this.decayRates.hunger * 0.5));
+            
+            // Wake up if full energy
+            if (this.stats.energy >= 100) {
+                this.toggleSleep(false);
+                this.showToast("Fully Rested!");
+            }
+        }
+
+        this.checkState();
+        this.updateUI();
+    }
+
+    interact(action) {
+        if (this.isDead) return;
+        if (this.isSleeping && action !== 'sleep') {
+            this.showToast("Zzz... (Wake up first)");
+            return;
+        }
+
+        const center = document.querySelector('.scene').getBoundingClientRect();
+        const cx = center.left + center.width / 2;
+        const cy = center.top + center.height / 2;
+
+        let xpGain = 0;
+
+        switch(action) {
+            case 'feed':
+                if (this.stats.hunger >= 95) {
+                    this.showToast("Not hungry!");
+                    return;
+                }
+                this.stats.hunger = Math.min(100, this.stats.hunger + 30);
+                this.stats.hygiene = Math.max(0, this.stats.hygiene - 5);
+                this.spawnParticle(cx, cy, '🐟');
+                xpGain = 10;
+                break;
+            case 'sleep':
+                this.toggleSleep(!this.isSleeping);
+                return;
+            case 'play':
+                if (this.stats.energy < 20) {
+                    this.showToast("Too tired...");
+                    return;
+                }
+                this.stats.fun = Math.min(100, this.stats.fun + 30);
+                this.stats.energy = Math.max(0, this.stats.energy - 15);
+                this.stats.hunger = Math.max(0, this.stats.hunger - 10);
+                this.spawnParticle(cx, cy, '🧶');
+                xpGain = 15;
+                break;
+            case 'clean':
+                if (this.stats.hygiene >= 95) {
+                    this.showToast("Already clean!");
+                    return;
+                }
+                this.stats.hygiene = Math.min(100, this.stats.hygiene + 40);
+                this.stats.fun = Math.max(0, this.stats.fun - 5);
+                this.spawnParticle(cx, cy, '✨');
+                xpGain = 10;
+                break;
+            case 'pet':
+                this.stats.fun = Math.min(100, this.stats.fun + 5);
+                xpGain = 2;
+                break;
+        }
+
+        this.gainXP(xpGain);
+        this.updateUI();
+    }
+
+    toggleSleep(sleeping) {
+        this.isSleeping = sleeping;
+        const cat = document.getElementById('cat-svg');
+        const eyes = document.querySelector('.animate-blink');
+        
+        if (sleeping) {
+            cat.classList.remove('animate-float');
+            eyes.style.animation = 'none';
+            eyes.style.transform = 'scaleY(0.1)';
+            this.showToast("Goodnight!");
+        } else {
+            cat.classList.add('animate-float');
+            eyes.style.animation = '';
+            eyes.style.transform = '';
+            this.showToast("Good Morning!");
+        }
+    }
+
+    gainXP(amount) {
+        this.xp += amount;
+        if (this.xp >= this.xpToNext) {
+            this.levelUp();
+        }
+    }
+
+    levelUp() {
+        this.level++;
+        this.xp -= this.xpToNext;
+        this.xpToNext = Math.floor(this.xpToNext * 1.5);
+        this.showToast(`Level Up! Lvl ${this.level}`);
+        this.spawnParticle(window.innerWidth/2, window.innerHeight/2, '⭐');
+        
+        // Full restore on level up
+        this.stats.hunger = 100;
+        this.stats.energy = 100;
+        this.stats.fun = 100;
+        this.stats.hygiene = 100;
+    }
+
+    checkState() {
+        // Check for game over
+        if (this.stats.hunger <= 0 || this.stats.fun <= 0 || this.stats.hygiene <= 0) {
+            this.gameOver();
+        }
+    }
+
+    gameOver() {
+        this.isDead = true;
+        clearInterval(this.loopId);
+        document.getElementById('game-over').classList.add('visible');
+    }
+
+    restart() {
+        this.stats = { hunger: 80, energy: 80, fun: 80, hygiene: 80 };
+        this.xp = 0;
+        this.level = 1;
+        this.xpToNext = 100;
+        this.isSleeping = false;
+        this.isDead = false;
+        document.getElementById('game-over').classList.remove('visible');
+        this.init();
+    }
+
+    updateUI() {
+        // Update Stats
+        this.updateBar('hunger', this.stats.hunger);
+        this.updateBar('energy', this.stats.energy);
+        this.updateBar('fun', this.stats.fun);
+        this.updateBar('hygiene', this.stats.hygiene);
+
+        // Update XP
+        const xpPct = (this.xp / this.xpToNext) * 100;
+        document.getElementById('xp-bar').style.width = `${xpPct}%`;
+        document.getElementById('level-display').textContent = this.level;
+
+        // Update Cat Mood
+        const mouth = document.getElementById('mouth');
+        const avgStat = (this.stats.hunger + this.stats.energy + this.stats.fun + this.stats.hygiene) / 4;
+        
+        if (this.isSleeping) {
+            // Sleeping mouth (small o)
+            mouth.setAttribute('d', 'M 98 98 A 2 2 0 1 1 102 98');
+        } else if (avgStat > 70) {
+            // Happy
+            mouth.setAttribute('d', 'M 96 98 Q 100 102 104 98');
+        } else if (avgStat > 40) {
+            // Neutral
+            mouth.setAttribute('d', 'M 96 100 L 104 100');
+        } else {
+            // Sad
+            mouth.setAttribute('d', 'M 96 102 Q 100 98 104 102');
+        }
+    }
+
+    updateBar(type, value) {
+        const bar = document.getElementById(`${type}-bar`);
+        const val = document.getElementById(`${type}-val`);
+        
+        bar.style.width = `${value}%`;
+        val.textContent = `${Math.floor(value)}%`;
+
+        // Color coding
+        if (value > 60) bar.style.background = 'var(--success)';
+        else if (value > 30) bar.style.background = 'var(--warning)';
+        else bar.style.background = 'var(--danger)';
+    }
+
+    showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    spawnParticle(x, y, emoji) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.textContent = emoji;
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 1000);
+    }
+}
+
+// Start Game
+const game = new Game();
+</script>
+</body>
+</html>
