@@ -466,6 +466,51 @@
             animation: run-away 2s forwards ease-in;
         }
 
+        @keyframes digging {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0);
+            }
+
+            25% {
+                transform: translateY(5px) rotate(-5deg);
+            }
+
+            75% {
+                transform: translateY(5px) rotate(5deg);
+            }
+        }
+
+        @keyframes dust-rise {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-40px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .animate-digging {
+            animation: digging 0.2s infinite;
+        }
+
+        .dust-particle {
+            position: absolute;
+            background: #B2BEC3;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: dust-rise 1s forwards;
+            z-index: 90;
+        }
+
         /* Modal */
         .modal-overlay {
             position: fixed;
@@ -1121,7 +1166,23 @@
                         }
                         this.stats.hygiene = Math.min(100, this.stats.hygiene + 40);
                         this.stats.fun = Math.max(0, this.stats.fun - 5);
-                        this.spawnParticle(cx, cy, '✨');
+
+                        // Digging Animation
+                        const cat = document.getElementById('cat-svg');
+                        cat.classList.add('animate-digging');
+
+                        // Spawn Dust Clouds
+                        for (let i = 0; i < 5; i++) {
+                            setTimeout(() => {
+                                this.spawnDust(cx + (Math.random() * 60 - 30), cy + 50);
+                            }, i * 200);
+                        }
+
+                        setTimeout(() => {
+                            cat.classList.remove('animate-digging');
+                            this.spawnParticle(cx, cy, '✨');
+                        }, 1000);
+
                         this.soundManager.play('clean');
                         xpGain = 10;
                         break;
@@ -1134,6 +1195,18 @@
 
                 this.gainXP(xpGain);
                 this.updateUI();
+            }
+
+            spawnDust(x, y) {
+                const dust = document.createElement('div');
+                dust.className = 'dust-particle';
+                const size = 10 + Math.random() * 20;
+                dust.style.width = `${size}px`;
+                dust.style.height = `${size}px`;
+                dust.style.left = `${x}px`;
+                dust.style.top = `${y}px`;
+                document.body.appendChild(dust);
+                setTimeout(() => dust.remove(), 1000);
             }
 
             buyItem(itemId) {
