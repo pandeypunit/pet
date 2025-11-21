@@ -1134,6 +1134,11 @@
             selectPet(type, variant) {
                 this.currentPet = type;
                 this.currentVariant = variant;
+
+                // Clear accessories on swap
+                this.activeAccessories = [];
+                this.renderAccessories();
+
                 this.renderPet();
                 this.renderShop(); // Update shop for new pet type
                 this.closePetSelect();
