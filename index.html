@@ -1348,12 +1348,13 @@
 
             spawnDust(x, y) {
                 const dust = document.createElement('div');
-                dust.className = 'dust-particle';
-                const size = 10 + Math.random() * 20;
-                dust.style.width = `${size}px`;
-                dust.style.height = `${size}px`;
+                dust.textContent = '💩';
+                dust.style.position = 'absolute';
+                dust.style.fontSize = `${20 + Math.random() * 10}px`;
                 dust.style.left = `${x}px`;
                 dust.style.top = `${y}px`;
+                dust.style.pointerEvents = 'none';
+                dust.style.animation = 'float-up 1s ease-out forwards';
                 document.body.appendChild(dust);
                 setTimeout(() => dust.remove(), 1000);
             }
