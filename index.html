@@ -968,6 +968,7 @@
                 this.coins = 50; // Starting coins
                 this.isSleeping = false;
                 this.isDead = false;
+                this.lastPetTime = 0; // Cooldown tracker
 
                 this.loopId = null;
 
@@ -1081,8 +1082,8 @@
                 // Add click handler to cat
                 document.getElementById('cat-svg').addEventListener('click', (e) => {
                     if (this.isDead) return;
-                    this.spawnParticle(e.clientX, e.clientY, '❤️');
-                    this.interact('pet');
+                    // Pass click coordinates to interact
+                    this.interact('pet', { x: e.clientX, y: e.clientY });
                 });
 
                 // Add mute button
@@ -1243,7 +1244,7 @@
                 this.updateUI();
             }
 
-            interact(action) {
+            interact(action, coords = null) {
                 if (this.isDead) return;
 
                 // Initialize audio context on first interaction
@@ -1317,6 +1318,24 @@
                         xpGain = 10;
                         break;
                     case 'pet':
+                        const now = Date.now();
+                        if (now - this.lastPetTime < 1000) {
+                            this.showToast("Too fast! Pet gently.");
+                            return;
+                        }
+                        this.lastPetTime = now;
+
+                        // Spawn 3 hearts if coordinates provided
+                        if (coords) {
+                            for (let i = 0; i < 3; i++) {
+                                const offsetX = (Math.random() - 0.5) * 50;
+                                const offsetY = (Math.random() - 0.5) * 50;
+                                setTimeout(() => {
+                                    this.spawnParticle(coords.x + offsetX, coords.y + offsetY, '❤️');
+                                }, i * 100);
+                            }
+                        }
+
                         this.stats.fun = Math.min(100, this.stats.fun + 5);
                         this.soundManager.play('purr');
                         xpGain = 2;
