@@ -810,7 +810,7 @@
                     <h1 style="font-size: 1.25rem;">Purrfect Pal</h1>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <button class="btn" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;"
-                            onclick="game.openCatSelect()">🐱 Swap</button>
+                            onclick="game.openPetSelect()">🐱 Swap</button>
                         <div class="level-badge">
                             <span>⭐ Lvl <span id="level-display">1</span></span>
                         </div>
@@ -947,7 +947,7 @@
                 <div class="cat-options" id="cat-options">
                     <!-- Options injected by JS -->
                 </div>
-                <button class="close-btn" onclick="game.closeCatSelect()">Close</button>
+                <button class="close-btn" onclick="game.closePetSelect()">Close</button>
             </div>
         </div>
     </div>
@@ -992,13 +992,52 @@
                     { id: 'hat', name: 'Party Hat', icon: '🎩', price: 200, type: 'accessory', desc: 'Time to party!' }
                 ];
 
-                this.catTypes = {
-                    'orange': { name: 'Ginger', body: '#FFB86C', belly: '#FFEAA7' },
-                    'black': { name: 'Void', body: '#6C5CE7', belly: '#A29BFE' }, // Changed to Purple
-                    'white': { name: 'Snow', body: '#DFE6E9', belly: '#FFFFFF' },
-                    'grey': { name: 'Smokey', body: '#B2BEC3', belly: '#DFE6E9' }
+                this.petTypes = {
+                    'cat': {
+                        name: 'Cat',
+                        variants: {
+                            'orange': { name: 'Ginger', body: '#FFB86C', belly: '#FFEAA7' },
+                            'black': { name: 'Void', body: '#6C5CE7', belly: '#A29BFE' },
+                            'white': { name: 'Snow', body: '#DFE6E9', belly: '#FFFFFF' },
+                            'grey': { name: 'Smokey', body: '#B2BEC3', belly: '#DFE6E9' }
+                        },
+                        shapes: {
+                            ears: 'M 70 75 L 60 40 L 90 65 Z M 130 75 L 140 40 L 110 65 Z',
+                            earInner: 'M 72 70 L 65 50 L 85 65 Z M 128 70 L 135 50 L 115 65 Z',
+                            tail: 'M 140 150 Q 170 120 160 90'
+                        }
+                    },
+                    'puppy': {
+                        name: 'Puppy',
+                        variants: {
+                            'brown': { name: 'Cocoa', body: '#D3A986', belly: '#F3DCC7' },
+                            'golden': { name: 'Goldie', body: '#F1C40F', belly: '#F9E79F' },
+                            'spotted': { name: 'Spot', body: '#E0E0E0', belly: '#FFFFFF' }
+                        },
+                        shapes: {
+                            ears: 'M 60 70 Q 50 90 70 100 L 75 80 Z M 140 70 Q 150 90 130 100 L 125 80 Z', // Floppy ears
+                            earInner: '', // No inner ear visible for floppy
+                            tail: 'M 140 140 Q 160 130 150 110' // Short tail
+                        }
+                    },
+                    'unicorn': {
+                        name: 'Unicorn',
+                        variants: {
+                            'pink': { name: 'Sparkle', body: '#FDA7DF', belly: '#F8EFBA' },
+                            'blue': { name: 'Sky', body: '#74B9FF', belly: '#55E6C1' },
+                            'white': { name: 'Magic', body: '#FFFFFF', belly: '#F8EFBA' }
+                        },
+                        shapes: {
+                            ears: 'M 70 75 L 60 40 L 90 65 Z M 130 75 L 140 40 L 110 65 Z', // Pointy ears
+                            earInner: 'M 72 70 L 65 50 L 85 65 Z M 128 70 L 135 50 L 115 65 Z',
+                            tail: 'M 140 150 Q 170 120 160 90', // Fluffy tail (styled via CSS maybe?)
+                            horn: 'M 95 60 L 100 30 L 105 60 Z'
+                        }
+                    }
                 };
-                this.currentCatType = 'orange';
+
+                this.currentPet = 'cat';
+                this.currentVariant = 'orange';
 
                 this.init();
             }
@@ -1008,7 +1047,7 @@
                 this.startGameLoop();
                 this.updateUI();
                 this.renderShop();
-                this.renderCat();
+                this.renderPet();
 
                 // Add click handler to cat
                 document.getElementById('cat-svg').addEventListener('click', (e) => {
@@ -1032,55 +1071,93 @@
                 controls.style.gridTemplateColumns = 'repeat(5, 1fr)';
             }
 
-            openCatSelect() {
+            openPetSelect() {
                 const modal = document.getElementById('cat-select-modal');
                 const container = document.getElementById('cat-options');
                 container.innerHTML = '';
+                container.style.gridTemplateColumns = 'repeat(3, 1fr)'; // Adjust for more items
 
-                Object.entries(this.catTypes).forEach(([key, type]) => {
-                    const div = document.createElement('div');
-                    div.className = `cat-option ${this.currentCatType === key ? 'selected' : ''}`;
-                    div.onclick = () => this.selectCat(key);
+                // Render types and their variants
+                Object.entries(this.petTypes).forEach(([typeKey, typeData]) => {
+                    Object.entries(typeData.variants).forEach(([varKey, varData]) => {
+                        const div = document.createElement('div');
+                        div.className = `cat-option ${this.currentPet === typeKey && this.currentVariant === varKey ? 'selected' : ''}`;
+                        div.onclick = () => this.selectPet(typeKey, varKey);
 
-                    div.innerHTML = `
-                        <div class="cat-preview" style="background: ${type.body}; border: 4px solid ${type.belly};"></div>
-                        <div style="font-weight: bold;">${type.name}</div>
-                    `;
-                    container.appendChild(div);
+                        div.innerHTML = `
+                            <div class="cat-preview" style="background: ${varData.body}; border: 4px solid ${varData.belly};"></div>
+                            <div style="font-weight: bold; font-size: 0.8rem;">${varData.name}</div>
+                            <div style="font-size: 0.7rem; opacity: 0.7;">${typeData.name}</div>
+                        `;
+                        container.appendChild(div);
+                    });
                 });
 
                 modal.classList.add('visible');
             }
 
-            closeCatSelect() {
+            closePetSelect() {
                 document.getElementById('cat-select-modal').classList.remove('visible');
             }
 
-            selectCat(type) {
-                this.currentCatType = type;
-                this.renderCat();
-                this.closeCatSelect();
-                this.showToast(`Selected ${this.catTypes[type].name}!`);
+            selectPet(type, variant) {
+                this.currentPet = type;
+                this.currentVariant = variant;
+                this.renderPet();
+                this.closePetSelect();
+                this.showToast(`Selected ${this.petTypes[type].variants[variant].name}!`);
                 this.soundManager.play('feed');
             }
 
-            renderCat() {
-                const colors = this.catTypes[this.currentCatType];
+            renderPet() {
+                const typeData = this.petTypes[this.currentPet];
+                const colors = typeData.variants[this.currentVariant];
+                const shapes = typeData.shapes;
                 const svg = document.getElementById('cat-svg');
 
-                // Update Body and Ears (Fill)
-                svg.querySelectorAll('.cat-body, .cat-ear').forEach(el => {
-                    el.style.fill = colors.body;
-                });
-
-                // Update Tail (Stroke)
+                // Update Tail
                 const tail = svg.querySelector('.cat-tail');
-                if (tail) tail.style.stroke = colors.body;
+                if (tail) {
+                    tail.setAttribute('d', shapes.tail);
+                    tail.style.stroke = colors.body;
+                }
 
-                // Update Belly and Inner Ears (Fill)
-                svg.querySelectorAll('.cat-belly, .cat-ear-inner').forEach(el => {
-                    el.style.fill = colors.belly;
-                });
+                // Update Body/Head Colors
+                svg.querySelectorAll('.cat-body').forEach(el => el.style.fill = colors.body);
+                svg.querySelectorAll('.cat-belly').forEach(el => el.style.fill = colors.belly);
+
+                // Handle Ears (Complex because count might change or shape is complex)
+                const headGroup = svg.querySelector('g[transform="translate(0, -10)"]');
+
+                // Remove old ears
+                headGroup.querySelectorAll('.cat-ear, .cat-ear-inner, .unicorn-horn').forEach(e => e.remove());
+
+                // Add new ears
+                const newEars = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                newEars.setAttribute("d", shapes.ears);
+                newEars.setAttribute("class", "cat-ear");
+                newEars.style.fill = colors.body;
+                headGroup.prepend(newEars);
+
+                if (shapes.earInner) {
+                    const newEarInner = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    newEarInner.setAttribute("d", shapes.earInner);
+                    newEarInner.setAttribute("class", "cat-ear-inner");
+                    newEarInner.style.fill = colors.belly;
+                    // Insert after ears
+                    newEars.after(newEarInner);
+                }
+
+                // Handle Unicorn Horn
+                if (this.currentPet === 'unicorn' && shapes.horn) {
+                    const horn = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    horn.setAttribute("d", shapes.horn);
+                    horn.setAttribute("class", "unicorn-horn");
+                    horn.style.fill = "#F1C40F"; // Gold horn
+                    horn.style.stroke = "#F39C12";
+                    horn.style.strokeWidth = "1";
+                    headGroup.appendChild(horn); // Add on top
+                }
             }
 
             startGameLoop() {
