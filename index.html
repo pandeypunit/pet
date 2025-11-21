@@ -1319,7 +1319,7 @@
                         break;
                     case 'pet':
                         const now = Date.now();
-                        if (now - this.lastPetTime < 1000) {
+                        if (now - this.lastPetTime < 3000) {
                             this.showToast("Too fast! Pet gently.");
                             return;
                         }
