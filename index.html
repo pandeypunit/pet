@@ -984,13 +984,41 @@
 
                 this.activeAccessories = [];
 
-                this.shopItems = [
-                    { id: 'treat', name: 'Tasty Treat', icon: '🍬', price: 15, type: 'consumable', effect: 'hunger+50', desc: 'Restores 50% Hunger' },
-                    { id: 'toy', name: 'Mouse Toy', icon: '🐁', price: 25, type: 'consumable', effect: 'fun+50', desc: 'Restores 50% Fun' },
-                    { id: 'bow', name: 'Red Bow', icon: '🎀', price: 100, type: 'accessory', desc: 'A cute red bow' },
-                    { id: 'glasses', name: 'Cool Glasses', icon: '😎', price: 150, type: 'accessory', desc: 'Stylish eyewear' },
-                    { id: 'hat', name: 'Party Hat', icon: '🎩', price: 200, type: 'accessory', desc: 'Time to party!' }
-                ];
+                this.activeAccessories = [];
+
+                // Pet-specific shop data
+                this.shopData = {
+                    'cat': {
+                        title: 'Cat Shop',
+                        items: [
+                            { id: 'treat', name: 'Tasty Treat', icon: '🍬', price: 15, type: 'consumable', effect: 'hunger+50', desc: 'Restores 50% Hunger' },
+                            { id: 'toy', name: 'Mouse Toy', icon: '🐁', price: 25, type: 'consumable', effect: 'fun+50', desc: 'Restores 50% Fun' },
+                            { id: 'bow', name: 'Red Bow', icon: '🎀', price: 100, type: 'accessory', desc: 'A cute red bow' },
+                            { id: 'glasses', name: 'Cool Glasses', icon: '😎', price: 150, type: 'accessory', desc: 'Stylish eyewear' },
+                            { id: 'hat', name: 'Party Hat', icon: '🎩', price: 200, type: 'accessory', desc: 'Time to party!' }
+                        ]
+                    },
+                    'puppy': {
+                        title: 'Puppy Shop',
+                        items: [
+                            { id: 'treat', name: 'Doggy Biscuit', icon: '🦴', price: 15, type: 'consumable', effect: 'hunger+50', desc: 'Restores 50% Hunger' },
+                            { id: 'toy', name: 'Tennis Ball', icon: '🎾', price: 25, type: 'consumable', effect: 'fun+50', desc: 'Restores 50% Fun' },
+                            { id: 'bow', name: 'Blue Bow', icon: '🎀', price: 100, type: 'accessory', desc: 'A cute blue bow' },
+                            { id: 'glasses', name: 'Aviators', icon: '🕶️', price: 150, type: 'accessory', desc: 'Cool shades' },
+                            { id: 'hat', name: 'Cap', icon: '🧢', price: 200, type: 'accessory', desc: 'Sporty cap' }
+                        ]
+                    },
+                    'unicorn': {
+                        title: 'Magic Shop',
+                        items: [
+                            { id: 'treat', name: 'Star Dust', icon: '✨', price: 15, type: 'consumable', effect: 'hunger+50', desc: 'Restores 50% Hunger' },
+                            { id: 'toy', name: 'Rainbow', icon: '🌈', price: 25, type: 'consumable', effect: 'fun+50', desc: 'Restores 50% Fun' },
+                            { id: 'bow', name: 'Glitter Bow', icon: '🎀', price: 100, type: 'accessory', desc: 'Sparkly bow' },
+                            { id: 'glasses', name: 'Star Shades', icon: '⭐', price: 150, type: 'accessory', desc: 'Star-shaped glasses' },
+                            { id: 'hat', name: 'Crown', icon: '👑', price: 200, type: 'accessory', desc: 'Royal crown' }
+                        ]
+                    }
+                };
 
                 this.petTypes = {
                     'cat': {
@@ -1107,6 +1135,7 @@
                 this.currentPet = type;
                 this.currentVariant = variant;
                 this.renderPet();
+                this.renderShop(); // Update shop for new pet type
                 this.closePetSelect();
                 this.showToast(`Selected ${this.petTypes[type].variants[variant].name}!`);
                 this.soundManager.play('feed');
@@ -1302,7 +1331,8 @@
             }
 
             buyItem(itemId) {
-                const item = this.shopItems.find(i => i.id === itemId);
+                const currentShop = this.shopData[this.currentPet].items;
+                const item = currentShop.find(i => i.id === itemId);
                 if (!item) return;
 
                 if (this.coins >= item.price) {
@@ -1332,10 +1362,10 @@
             useItem(item) {
                 if (item.effect === 'hunger+50') {
                     this.stats.hunger = Math.min(100, this.stats.hunger + 50);
-                    this.spawnParticle(window.innerWidth / 2, window.innerHeight / 2, '🍬');
+                    this.spawnParticle(window.innerWidth / 2, window.innerHeight / 2, item.icon);
                 } else if (item.effect === 'fun+50') {
                     this.stats.fun = Math.min(100, this.stats.fun + 50);
-                    this.spawnParticle(window.innerWidth / 2, window.innerHeight / 2, '🐁');
+                    this.spawnParticle(window.innerWidth / 2, window.innerHeight / 2, item.icon);
                 }
             }
 
@@ -1356,20 +1386,51 @@
 
                 this.activeAccessories.forEach(id => {
                     let el;
+                    const pet = this.currentPet;
+
                     if (id === 'bow') {
                         el = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        el.setAttribute("d", "M 100 150 L 90 140 L 100 145 L 110 140 Z M 100 145 L 95 155 L 100 150 L 105 155 Z");
                         el.setAttribute("class", "cat-accessory accessory-bow");
                         // Adjust position to neck
                         el.setAttribute("transform", "translate(0, -5) scale(1.5) translate(-33, -48)");
+
+                        // Different colors for different bows (based on pet type logic in shopData)
+                        if (pet === 'puppy') el.style.fill = '#0984e3'; // Blue
+                        else if (pet === 'unicorn') el.style.fill = '#fd79a8'; // Pink
+                        else el.style.fill = '#FF7675'; // Red (default)
+
+                        el.setAttribute("d", "M 100 150 L 90 140 L 100 145 L 110 140 Z M 100 145 L 95 155 L 100 150 L 105 155 Z");
                     } else if (id === 'glasses') {
                         el = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                        el.innerHTML = '<circle cx="85" cy="80" r="10" /><circle cx="115" cy="80" r="10" /><line x1="95" y1="80" x2="105" y2="80" />';
                         el.setAttribute("class", "cat-accessory accessory-glasses");
+
+                        if (pet === 'unicorn') {
+                            // Star Shades
+                            el.innerHTML = '<path d="M 85 80 L 82 88 L 75 88 L 80 92 L 78 100 L 85 95 L 92 100 L 90 92 L 95 88 L 88 88 Z" fill="gold" stroke="orange" /><path d="M 115 80 L 112 88 L 105 88 L 110 92 L 108 100 L 115 95 L 122 100 L 120 92 L 125 88 L 118 88 Z" fill="gold" stroke="orange" /><line x1="95" y1="85" x2="105" y2="85" stroke="orange" />';
+                        } else if (pet === 'puppy') {
+                            // Aviators
+                            el.innerHTML = '<path d="M 75 75 Q 75 90 85 90 Q 95 90 95 75 L 95 75 L 75 75 Z" fill="#2d3436" opacity="0.8" /><path d="M 105 75 Q 105 90 115 90 Q 125 90 125 75 L 125 75 L 105 75 Z" fill="#2d3436" opacity="0.8" /><line x1="95" y1="78" x2="105" y2="78" stroke="#2d3436" stroke-width="2" />';
+                        } else {
+                            // Standard Glasses
+                            el.innerHTML = '<circle cx="85" cy="80" r="10" /><circle cx="115" cy="80" r="10" /><line x1="95" y1="80" x2="105" y2="80" />';
+                        }
                     } else if (id === 'hat') {
                         el = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        el.setAttribute("d", "M 80 50 L 100 10 L 120 50 Z");
                         el.setAttribute("class", "cat-accessory accessory-hat");
+
+                        if (pet === 'unicorn') {
+                            // Crown
+                            el.setAttribute("d", "M 80 50 L 80 40 L 90 50 L 100 30 L 110 50 L 120 40 L 120 50 Z");
+                            el.style.fill = "gold";
+                        } else if (pet === 'puppy') {
+                            // Cap
+                            el.setAttribute("d", "M 80 50 Q 100 30 120 50 L 130 55 L 120 50 Z");
+                            el.style.fill = "#74b9ff";
+                        } else {
+                            // Party Hat
+                            el.setAttribute("d", "M 80 50 L 100 10 L 120 50 Z");
+                            el.style.fill = "#6C5CE7";
+                        }
                     }
 
                     if (el) container.appendChild(el);
@@ -1377,10 +1438,14 @@
             }
 
             renderShop() {
+                const shopInfo = this.shopData[this.currentPet];
                 const container = document.getElementById('shop-items');
-                container.innerHTML = '';
+                const title = document.querySelector('.shop-header span');
 
-                this.shopItems.forEach(item => {
+                container.innerHTML = '';
+                title.textContent = shopInfo.title;
+
+                shopInfo.items.forEach(item => {
                     const div = document.createElement('div');
                     div.className = `shop-item ${this.coins < item.price ? 'disabled' : ''}`;
                     div.onclick = () => this.buyItem(item.id);
@@ -1779,32 +1844,41 @@
             }
 
             playPurr() {
-                // Simple purr using low frequency sawtooth + noise approximation
+                // Filtered sawtooth for audible but soft rumble
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(25, this.ctx.currentTime);
+                const filter = this.ctx.createBiquadFilter();
 
-                // AM Modulation for purr texture
+                osc.type = 'sawtooth'; // Sawtooth has harmonics we can hear
+                osc.frequency.setValueAtTime(25, this.ctx.currentTime); // Low rumble
+
+                // Lowpass filter to remove harsh high frequencies (the "hoarseness")
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(200, this.ctx.currentTime);
+
+                // FM Modulation for purr texture
                 const lfo = this.ctx.createOscillator();
                 lfo.type = 'sine';
-                lfo.frequency.value = 10; // 10Hz purr rattle
+                lfo.frequency.value = 10; // Rattle speed
                 const lfoGain = this.ctx.createGain();
-                lfoGain.gain.value = 50; // Depth of modulation
+                lfoGain.gain.value = 50; // Depth
 
                 lfo.connect(lfoGain);
                 lfoGain.connect(osc.frequency);
 
-                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1);
-
-                osc.connect(gain);
+                // Connect chain: Osc -> Filter -> Gain -> Dest
+                osc.connect(filter);
+                filter.connect(gain);
                 gain.connect(this.ctx.destination);
+
+                // Envelope
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime); // Slightly louder start
+                gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1.5);
 
                 osc.start();
                 lfo.start();
-                osc.stop(this.ctx.currentTime + 1);
-                lfo.stop(this.ctx.currentTime + 1);
+                osc.stop(this.ctx.currentTime + 1.5);
+                lfo.stop(this.ctx.currentTime + 1.5);
             }
         }
 
