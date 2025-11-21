@@ -970,12 +970,6 @@
                 this.isDead = false;
 
                 this.loopId = null;
-                this.decayRates = {
-                    hunger: 0.05,
-                    energy: 0.03,
-                    fun: 0.04,
-                    hygiene: 0.02
-                };
 
                 this.inventory = {
                     'treat': 0,
@@ -1034,7 +1028,8 @@
                             earInner: 'M 72 70 L 65 50 L 85 65 Z M 128 70 L 135 50 L 115 65 Z',
                             tail: 'M 140 150 Q 170 120 160 90',
                             nose: 'M 96 90 L 104 90 L 100 95 Z' // Triangle
-                        }
+                        },
+                        decayRates: { hunger: 0.08, energy: 0.05, fun: 0.06, hygiene: 0.03 } // Balanced
                     },
                     'puppy': {
                         name: 'Puppy',
@@ -1048,7 +1043,8 @@
                             earInner: '',
                             tail: 'M 140 145 Q 160 135 150 115', // Short waggy tail
                             nose: 'M 94 90 Q 100 86 106 90 Q 100 98 94 90' // Round nose
-                        }
+                        },
+                        decayRates: { hunger: 0.25, energy: 0.20, fun: 0.20, hygiene: 0.15 } // Very High maintenance
                     },
                     'unicorn': {
                         name: 'Unicorn',
@@ -1063,12 +1059,14 @@
                             tail: 'M 140 150 Q 180 110 150 80', // Fluffier tail
                             horn: 'M 96 75 L 100 35 L 104 75 Z', // Taller, thinner horn
                             nose: 'M 96 90 L 104 90 L 102 95 L 98 95 Z' // Squared nose
-                        }
+                        },
+                        decayRates: { hunger: 0.02, energy: 0.01, fun: 0.02, hygiene: 0.01 } // Very Low maintenance
                     }
                 };
 
                 this.currentPet = 'cat';
                 this.currentVariant = 'orange';
+                this.decayRates = this.petTypes['cat'].decayRates; // Initialize with cat rates
 
                 this.init();
             }
@@ -1134,6 +1132,9 @@
             selectPet(type, variant) {
                 this.currentPet = type;
                 this.currentVariant = variant;
+
+                // Update decay rates
+                this.decayRates = this.petTypes[type].decayRates;
 
                 // Clear accessories on swap
                 this.activeAccessories = [];
