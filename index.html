@@ -1218,16 +1218,19 @@
             tick() {
                 if (this.isDead) return;
 
+                // Difficulty Multiplier: Increases by 10% per level
+                const difficultyMultiplier = 1 + ((this.level - 1) * 0.1);
+
                 // Decay stats
                 if (!this.isSleeping) {
-                    this.stats.hunger = Math.max(0, this.stats.hunger - this.decayRates.hunger);
-                    this.stats.energy = Math.max(0, this.stats.energy - this.decayRates.energy);
-                    this.stats.fun = Math.max(0, this.stats.fun - this.decayRates.fun);
-                    this.stats.hygiene = Math.max(0, this.stats.hygiene - this.decayRates.hygiene);
+                    this.stats.hunger = Math.max(0, this.stats.hunger - (this.decayRates.hunger * difficultyMultiplier));
+                    this.stats.energy = Math.max(0, this.stats.energy - (this.decayRates.energy * difficultyMultiplier));
+                    this.stats.fun = Math.max(0, this.stats.fun - (this.decayRates.fun * difficultyMultiplier));
+                    this.stats.hygiene = Math.max(0, this.stats.hygiene - (this.decayRates.hygiene * difficultyMultiplier));
                 } else {
                     // Regenerate energy while sleeping
                     this.stats.energy = Math.min(100, this.stats.energy + 0.2);
-                    this.stats.hunger = Math.max(0, this.stats.hunger - (this.decayRates.hunger * 0.5));
+                    this.stats.hunger = Math.max(0, this.stats.hunger - (this.decayRates.hunger * difficultyMultiplier * 0.5));
 
                     // Wake up if full energy
                     if (this.stats.energy >= 100) {
