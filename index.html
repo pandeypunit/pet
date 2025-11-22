@@ -38,9 +38,10 @@
             color: var(--text);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            overflow: hidden;
+            overflow-y: auto;
+            padding: 2rem 0;
         }
 
         .main-wrapper {
@@ -258,6 +259,40 @@
             gap: 0.5rem;
             box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
+        }
+
+        .seo-content {
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            color: var(--text);
+            text-align: center;
+        }
+
+        .seo-content h1 {
+            color: var(--primary-dark);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .seo-content h2 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .seo-content p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: var(--text-light);
         }
 
         .xp-bar-container {
@@ -953,6 +988,28 @@
                 <button class="close-btn" onclick="game.closePetSelect()">Close</button>
             </div>
         </div>
+    </div>
+
+    <!-- SEO Content Section -->
+    <div class="seo-content">
+        <h1>Play Purrfect Pal - A Fun Virtual Pet Game for Kids</h1>
+
+        <p>Do you love animals? In Purrfect Pal, you can take care of your very own virtual pet. It is free and easy to
+            play. You can choose a cute cat, a playful puppy, or a magical unicorn.</p>
+
+        <h2>Take Care of Your Virtual Pet</h2>
+        <p>Your new friend needs your help to stay happy. You can feed them tasty treats like fish and bones. Play games
+            with them using a ball of yarn or a tennis ball. If they get dirty, give them a bath to make them sparkle.
+            Don't forget to let them sleep when they are tired.</p>
+
+        <h2>Customize Your Pet</h2>
+        <p>You can make your pet look special. Visit the shop to buy cool hats, glasses, and bows. You can also change
+            their color. Want a pink unicorn or a spotted puppy? You can have them all in this fun online game.</p>
+
+        <h2>Why Kids Love Purrfect Pal</h2>
+        <p>This game is safe and fun for everyone. There are no downloads needed. You can play right in your browser.
+            Watch your pet grow and level up as you become the best pet owner ever. Start playing now and make a new
+            best friend!</p>
     </div>
 
     <script>
